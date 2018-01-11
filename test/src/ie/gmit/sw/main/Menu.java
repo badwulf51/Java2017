@@ -17,8 +17,8 @@ public class Menu {
 		System.out.println("Enter file 2: ");
 		file2 = reader.nextLine();
 		
-		Launcher.Launch(file1, file2);
-	
 		reader.close();
+		
+		Launcher.Launch(file1, file2);	
 	}
 }
