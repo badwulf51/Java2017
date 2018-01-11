@@ -1,3 +1,7 @@
+// Aron O' Malley 
+// G00327019 
+// Java Project 2017 
+
 package ie.gmit.sw.main;
 
 import java.util.ArrayList;
@@ -13,7 +17,7 @@ import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+// class the the process of implementing and using shingles and minhashes
 public class MainProcess implements Runnable {
 
 	private BlockingQueue<Shingle> q;
@@ -21,14 +25,14 @@ public class MainProcess implements Runnable {
 	private int[] minhashes;
 	private Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
 	private ExecutorService pool;
-	
+	// adds to pool 
 	public MainProcess(BlockingQueue<Shingle> q, int k, int poolSize) {
 		this.q = q;
 		this.k = k;
 		pool = Executors.newFixedThreadPool(poolSize);
 		init();
 	}
-	
+	// same as before 
 	public void init(){
 		Random random = new Random();
 		minhashes = new int[k];
@@ -38,7 +42,7 @@ public class MainProcess implements Runnable {
 		}
 	}
 	
-	// CHANGED
+	//prints out avalible hashes 
 	private void printHashes()
 	{
 		System.out.println("Hashes:");
@@ -48,26 +52,26 @@ public class MainProcess implements Runnable {
 			System.out.println("DocId " + i + ": " + map.get(i).toString());
 		}
 	}
-	
+	// calculation used to show if hashes match 
 	private void calculateSimilarity()
 	{
 		
 		Set<Integer> set1 = new HashSet<Integer>();		
 		Set<Integer> set2 = new HashSet<Integer>();
-		
+		// adds to map 
 		set1.addAll(map.get(0));
 		set2.addAll(map.get(1));
 		
 		Set<Integer> n = new TreeSet<Integer>(set1);
 		n.retainAll(set2);
-		
+		// print statement for how many matching hashes there are
 		System.out.println("Documents have " + n.size() + " matching minhashes");
 
 	}
-	
+	// run 
 	public void run() {
 		int docCount = 2;
-		
+		// while doc is not 0 
 		while(docCount > 0) {
 			try {
 				
@@ -78,7 +82,7 @@ public class MainProcess implements Runnable {
 					
 					
 					pool.execute(new Runnable() {
-						
+						// ovverrides previous 
 						@Override
 						public void run() {
 
@@ -112,6 +116,7 @@ public class MainProcess implements Runnable {
 					});
 					
 					
+					// useless 
 				}else {
 					docCount--;
 					System.out.println("MP: Found poison.. waiting on " + docCount + " documents" );
@@ -126,5 +131,4 @@ public class MainProcess implements Runnable {
 		calculateSimilarity();
 	}
 }
-
 
