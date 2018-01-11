@@ -1,3 +1,7 @@
+// Aron O' Malley 
+// G00327019 
+// Java Project 2017 
+
 package ie.gmit.sw.main;
 
 import java.io.BufferedReader;
@@ -7,40 +11,45 @@ import java.io.IOException;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
-
+// class for doc parser 
 public class DocumentParser implements Runnable {
+	// variables and blocking que 
 	private BlockingQueue<Shingle>queue;
 	private String file;
 	private int shingleSize, k;
 	private Deque<String> buffer = new LinkedList<>();
 	private int docId;	
-
+	// doc parser 
 	public DocumentParser(String file, BlockingQueue<Shingle>q, int shingleSize, int k, int docId) {
-		// CHANGED
+		// takes file, shingle size
 		this.file = file;
 		this.shingleSize = shingleSize;
 		this.k = k;
 		this.docId = docId;
-		
+		// queue
 		this.queue = q;
 	}
-	
+	// run 
 	public void run() {
+		// message for showing that the thread has been started for file 
 		System.out.println("DP: DocumentParser.run - Started thread for " + file);
+		// try catch
 		try {
+			// buffered reader 
 			BufferedReader br = new BufferedReader(new FileReader(file + ".txt"));
 			
 			String line = null;
 			int linecounter = 0;
+			// while loop
 			while((line = br.readLine())!= null) {
 				System.out.println("DP: [" + file + "] processing: " + line);
 				String uLine = line.toUpperCase();
 				String[] words = uLine.split(" ");
 				addWordsToBuffer(words);
-				// CHANGED
+				// shingle here
 				Shingle s;
 				do
-				{
+				{	// gets next shingle 
 					s = getNextShingle();
 					if(s != null)
 					{
@@ -48,9 +57,9 @@ public class DocumentParser implements Runnable {
 					}
 				} while (s != null);
 				
-				//Thread.sleep(1000);
+				
 			}
-			
+			// flushes buffer 
 			flushBuffer();
 			br.close();
 		} catch(FileNotFoundException e1) {
@@ -62,19 +71,19 @@ public class DocumentParser implements Runnable {
 		}
 	}
 
-
+	// adds words to buffer 
 	private void addWordsToBuffer(String [] words) {
 		for(String s : words) {
 			buffer.add(s);
 		}
   
     }
-	
+	// gets next shingle
 	private Shingle getNextShingle()
 	{
 		return getNextShingle(shingleSize);
 	}
-
+// code taken from offline, did not work originally but after a few tests I relised I forgot to set buffer.size in if 
   	private Shingle getNextShingle(int shingleSize) {
   		
   		if(buffer.size() < shingleSize)
@@ -102,6 +111,7 @@ public class DocumentParser implements Runnable {
 	
 
 	private void flushBuffer() {
+		// output message for flushing buffer 
 		System.out.println("DP: [" + file + "] Flushing buffer...");
 		
 		boolean flushing = true;
@@ -114,7 +124,7 @@ public class DocumentParser implements Runnable {
 			}
 			
 			Shingle s = getNextShingle(size);
-			
+			// try catch 
 			try {
 				if(s != null) {
 					queue.put(s);
